@@ -19,34 +19,44 @@ object mainSimple {
         if (line.length() > 0)
           input += (line + "\n")
         Execute()
-        input = new ListBuffer[String]
+        input.clear()
       } else {
         input += s
       }
     }
   }
 
-  def Execute() = {
-    //println("Now Execute:")
-    //for (s <- input)
-    //    println(s)
+  def Execute(): Boolean = {
+    
+    try {
+      val arr = input.filter(s => s.trim() != "" )
+        .map(s => StatementParser.parseAll(StatementParser.expr, s).get).toArray
 
-    val arr = input.takeWhile(s => s.length() > 0)
-      .map(s => StatementParser.parseAll(StatementParser.expr, s).get).toArray
+      if (arr.length == 0) {
+        println("parse expression error!")
+        return false
+      }
 
-    val parseStatement = if (arr.length == 1) arr.head else new Sequence(arr: _*)
+      val parseStatement = if (arr.length == 1) arr.head else new Sequence(arr: _*)
 
-    if (SimpleValidator.Check(parseStatement)) {
-      println(parseStatement)
+      if (SimpleValidator.Check(parseStatement)) {
 
-      GlobalStore.Allocation(parseStatement)
+        //only for debug
+        println(parseStatement)
 
-      //GlobalStore.Watch
-      SimpleImperative.apply(GlobalStore.Memory)(parseStatement)
-    } else {
-      System.err.println("Valid Check error!")
+        GlobalStore.Allocation(parseStatement)
+
+        //GlobalStore.Watch
+        SimpleImperative.apply(GlobalStore.Memory)(parseStatement)
+
+        return true
+      } else {
+        System.err.println("Valid Check error!")
+      }
+    } catch {
+      case e: Exception => println(e.getMessage());
     }
-
+    false
   }
 
   def main(args: Array[String]) {

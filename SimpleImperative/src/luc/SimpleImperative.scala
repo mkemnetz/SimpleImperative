@@ -99,7 +99,7 @@ object GlobalStore {
   def New(s: String): Cell = {
     if (!store.keySet.exists(key => key.equals(s))) {
       store += (s -> Cell(0))
-      println("new memory for " + s )
+      println("new memory for " + s)
     }
     store(s)
   }
@@ -107,7 +107,13 @@ object GlobalStore {
   def Watch(): Unit = println(store)
   def Allocation(s: Statement): Cell = s match {
     case Variable(name) => New(name)
-    case Assignment(left, right) => Allocation(left)
+    case Plus(left, right) => Allocation(left); Allocation(right)
+    case Minus(left, right) => Allocation(left); Allocation(right)
+    case Times(left, right) => Allocation(left); Allocation(right)
+    case Div(left, right) => Allocation(left); Allocation(right)
+    case Assignment(left, right) => Allocation(left); Allocation(right)
+    case Selection(r, f) => Allocation(r)
+    case While(guard, body) => Allocation(guard); Allocation(body)
     case Sequence(statements @ _*) => {
       statements.map(e => Allocation(e))
       null
