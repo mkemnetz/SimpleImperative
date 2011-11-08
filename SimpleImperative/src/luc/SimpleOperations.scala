@@ -34,7 +34,7 @@ object mainSimple {
     val arr = input.takeWhile(s => s.length() > 0)
       .map(s => StatementParser.parseAll(StatementParser.expr, s).get).toArray
 
-    val parseStatement = new Sequence(arr: _*)
+    val parseStatement = if (arr.length == 1) arr.head else new Sequence(arr: _*)
 
     if (SimpleValidator.Check(parseStatement)) {
       println(parseStatement)
