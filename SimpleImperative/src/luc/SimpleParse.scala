@@ -4,14 +4,11 @@ import scala.util.parsing.combinator._
 
 object StatementParser extends JavaTokenParsers {
   def expr: Parser[Statement] = (
-    term ~ "+" ~ expr ^^ { case l ~ _ ~ r => Plus(l, r) }
+    statement ~ "+" ~ expr ^^ { case l ~ _ ~ r => Plus(l, r) }
     | statement ~ "-" ~ expr ^^ { case l ~ _ ~ r => Minus(l, r) }
     | statement ~ "=" ~ expr ^^ { case l ~ _ ~ r => Assignment(l, r) }
-    | term
-    | statement)
-  def term: Parser[Statement] = (
-    statement ~ "*" ~ statement ^^ { case l ~ _ ~ r => Times(l, r) }
-    | statement ~ "/" ~ statement ^^ { case l ~ _ ~ r => Div(l, r) }
+    | statement ~ "*" ~ expr ^^ { case l ~ _ ~ r => Times(l, r) }
+    | statement ~ "/" ~ expr ^^ { case l ~ _ ~ r => Div(l, r) }
     | statement)
   def statement: Parser[Statement] = (
     wholeNumber ^^ { case s => Constant(s.toInt) }
