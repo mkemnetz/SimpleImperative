@@ -27,14 +27,14 @@ object mainSimple {
   }
 
   def Execute() = {
-	println("Now Execute:")
-    for (s <- input)
-      println(s)
+    //println("Now Execute:")
+    //for (s <- input)
+    //    println(s)
 
     val arr = input.takeWhile(s => s.length() > 0)
       .map(s => StatementParser.parseAll(StatementParser.expr, s).get).toArray
 
-    val parseStatement: Statement = new Sequence(arr: _*)
+    val parseStatement = new Sequence(arr: _*)
 
     if (SimpleValidator.Check(parseStatement)) {
       println(parseStatement)

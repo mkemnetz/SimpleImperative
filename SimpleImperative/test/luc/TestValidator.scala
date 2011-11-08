@@ -15,45 +15,55 @@ class testValidator extends FunSuite {
     }
   }
 
-  var s: Statement = new Assignment(Variable("n"), Constant(1))
+  //var n = 1 --> OK
+  testParse("testcase1", Assignment(Variable("n"), Constant(1)), true);
 
-  testParse("testcase1", s, true);
+  // 1 = n -> error
+  testParse("testcase2", Assignment(Constant(1), Variable("n")), false);
 
-  s = new Assignment(Constant(1), Variable("n"))
+  //while(n) {n = 1} --> OK
+  testParse("testcase3", While(Variable("n"), Assignment(Variable("n"), Constant(1))), true);
 
-  testParse("testcase2", s, false);
+  //while(n=1) {n = 2} -->OK
+  testParse("testcase4", While(Assignment(Variable("n"), Constant(1)), Assignment(Variable("n"), Constant(2))), true);
 
-  s = new While(Variable("n"), s)
+  //while(1) {n = 1 } --> OK
+  testParse("testcase5", While(Constant(1), Assignment(Variable("n"), Constant(1))), true);
 
-  testParse("testcase3", s, true);
+  //while(1 = n ) { n = 1} --> error
+  testParse("testcase6", While(Assignment(Constant(1), Variable("n")), Assignment(Variable("n"), Constant(1))), false);
 
-  s = new While(Constant(1), s)
+  //while( n.next ) { n = 1 } --> OK
+  testParse("testcase7", While(Selection(Variable("n"), "next"), Assignment(Variable("n"), Constant(1))), true);
 
-  testParse("testcase4", s, true);
+  //while( while(n){1}) { n = 1 } --> error
+  testParse("testcase8", While(While(Variable("n"), Constant(1)), Assignment(Variable("n"), Constant(1))), false);
 
-  s = new While(Selection(Variable("n"), "next"), s)
-
-  testParse("testcase5", s, true);
-
-  s = new While(Assignment(Variable("n"), Constant(1)), s)
-
-  testParse("testcase6", s, true);
-
-  s = new While(While(Variable("n"), Constant(1)), s)
-
-  testParse("testcase7", s, false);
-  
   //assignment statements themselves cannot be used as l-values (only as r-values)
   // (n = 2) = v
   // it is error
-  s = Assignment(Assignment(Variable("n"), Constant(2)), Variable("v"))
 
-  testParse("testcase8", s, false);
-  
-  s = Assignment(Variable("v"), Assignment(Variable("n"), Constant(2)))
+  testParse("testcase9", Assignment(Assignment(Variable("n"), Constant(2)), Variable("v")), false);
 
   // v = (n = 2)
   // it is OK
-  testParse("testcase9", s, true);
-}
+  testParse("testcase10", Assignment(Variable("v"), Assignment(Variable("n"), Constant(2))), true);
 
+  //test assignment in Sequence
+  testParse("testcase11", Sequence(Assignment(Constant(1), Variable("v"))), false);
+  
+   //test assignment in plus
+  testParse("testcase12", Plus(Assignment(Constant(1), Variable("v")), Constant(0)), false);
+  
+  //test  assignment in minus
+  testParse("testcase13", Minus(Assignment(Constant(1), Variable("v")), Constant(0)), false);
+  
+  //test  assignment in times
+  testParse("testcase14", Times(Assignment(Constant(1), Variable("v")), Constant(0)), false);
+  
+  //test assignment in div
+  testParse("testcase15", Div(Assignment(Constant(1), Variable("v")), Constant(0)), false);
+  
+  //test assignment in Selection
+  testParse("testcase16", Selection(Assignment(Constant(1), Variable("v")), "next"), false);
+}
