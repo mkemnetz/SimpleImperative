@@ -12,7 +12,7 @@ object mainSimple {
     case "quit;" => println("exit."); System.exit(0)
     case "help;" => println("ouput usage text here")
     case "dump;" => GlobalStore.Watch
-    case "clear;" => GlobalStore.Reset
+    case "clear;" => GlobalStore.Reset; println("all memory variables have been cleared.")
     case _ => {
       if (s.endsWith(";")) {
         val line = s.replace(';', ' ').trim()
@@ -26,23 +26,30 @@ object mainSimple {
     }
   }
 
+  def Parse(s: String): Statement = {
+    // println(s)
+    try {
+      StatementParser.parseAll(StatementParser.value, s).get match {
+        case c: Clazz => null
+        case s: Statement => s
+        case Some(null) ~ Some(s: Statement) => s
+        case Some(Clazz) ~ None => null
+        case Failure => null
+      }
+    } catch {
+      case e: Exception => println(e.getMessage()); null
+    }
+  }
+
+  def ParseAll(): Array[Statement] = {
+    input.filter(s => s.trim() != "").map(s => Parse(s)).filter(e => e != null).toArray
+  }
+
   def Execute(): Boolean = {
 
     try {
-      //todo: maybe only parse class here
-
-      val arr = input.filter(s => s.trim() != "")
-        .map(s => (
-          StatementParser.parseAll(StatementParser.value, s).get match {
-            case c: Clazz => null
-            case s: Statement => s
-            case Some(null) ~ Some(s: Statement) => s
-            case Some(Clazz) ~ None => null
-            case _ => null
-          })).toArray
-
-   //   arr.foreach(e => println(e))
-
+      val arr = ParseAll()
+      
       if (arr.length == 0) {
         println("parse expression error!")
         return false

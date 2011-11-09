@@ -103,14 +103,17 @@ object GlobalStore {
   def New(s: String): Cell = {
     if (!store.keySet.exists(key => key.equals(s))) {
       store += (s -> Cell(0))
-      println("new memory for " + s)
+      println("allocate memory for " + s)
     }
     store(s)
   }
   def PutClass(s: String, c: Clazz): Clazz = {
-    if (!typedecl.keySet.exists(key => key.equals(s))) {
+    if (typedecl.keySet.exists(key => key.equals(s))) {
+      println("already exits type name " + s )
+    }
+    else{
       typedecl += (s -> c)
-      println("new type name " + s + " for " + c)
+      println("created type name " + s + " for " + c)
     }
     c
   }
