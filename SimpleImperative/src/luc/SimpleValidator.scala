@@ -11,7 +11,11 @@ object SimpleValidator {
       case _ => false
     }
     case Assignment(left, right) => left match {
-      case Variable(v) => true
+      case Variable(v) => right match{
+        case While(guard, body) => false
+        case e: Assignment => Check(e)
+        case _ => true
+      }
       case Sequence(statements @ _*) => statements.map(s => Check(s)).foldLeft(true)(_ && _)
       case Assignment(left, right) => Left(left).isRight
       case _ => false
