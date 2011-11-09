@@ -14,25 +14,17 @@ object StatementParser extends JavaTokenParsers {
     wholeNumber ^^ { case s => Constant(s.toInt) }
     | "var" ~ ident ^^ { case _ ~ e => new Variable(e) }
     | "while" ~ expr ~ expr ^^ { case _ ~ l ~ r => While(l, r) }
-   // | "new" ~ ident ^^ { case _ ~ s => New(GlobalStore.GetClass(s)) }
-    | "new" ~ clazz ^^ { case _ ~ e => New(e) }
+    | "new" ~ "struct" ~ ident ~ "{" ~ repsep(ident, ",") ~ "}"
+    	^^ { case _~ _ ~ e ~ _ ~ s ~ _ => New(GlobalStore.PutClass(e, Clazz(s: _*))) }
+    | "new" ~ ident ^^ { case _ ~ e => New(GlobalStore.GetClass(e)) }
     | "(" ~> expr <~ ")" ^^ { case e => e }
     | "{" ~> repsep(expr, ",") <~ "}" ^^ { case ss => Sequence(ss: _*) }
     | ident ~ "." ~ ident ^^ { case r ~ _ ~ f => Selection(Variable(r), f) }
     | ident ^^ { case s => Variable(s) })
   def clazz: Parser[Clazz] = (
     "struct" ~ ident ~ "{" ~ repsep(ident, ",") ~ "}" ^^ {
-      case _ ~ e ~ _ ~ s ~ _ => {
-    	  //insert to reference table 
-          //
-          GlobalStore.PutClass(e, Clazz(s: _*))
-      }}
-    | ident ^^  { case s => GlobalStore.GetClass(s) }
-    )
-  //  def value: Parser[Any] = obj
-  //  def arr: Parser[Seq[String]] = "(" ~> repsep(stringLiteral, ",") <~ ")"
-  //  def member: Parser[Any] = stringLiteral | stringLiteral ~ "." ~ value
-  //  def obj: Parser[Any] = "{" ~ repsep(member, ",") ~ "}"
-
+      case _ ~ e ~ _ ~ s ~ _ => GlobalStore.PutClass(e, Clazz(s: _*)) //insert to reference table
+    })
+  def value: Parser[Any] = opt(clazz) ~> expr
 }
 

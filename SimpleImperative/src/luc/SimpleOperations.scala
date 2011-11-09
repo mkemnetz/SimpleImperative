@@ -31,12 +31,17 @@ object mainSimple {
     try {
       //todo: maybe only parse class here
 
-      val arr: Array[Statement] = input.filter(s => s.trim() != "")
+      val arr = input.filter(s => s.trim() != "")
         .map(s => (
-          if (StatementParser.parseAll(StatementParser.clazz, s) != null) {
-            null
-          } else StatementParser.parseAll(StatementParser.expr, s).get))
-        .toArray
+          StatementParser.parseAll(StatementParser.value, s).get match {
+            case c: Clazz => null
+            case s: Statement => s
+            case Some(null) ~ Some(s: Statement) => s
+            case Some(Clazz) ~ None => null
+            case _ => null
+          })).toArray
+
+   //   arr.foreach(e => println(e))
 
       if (arr.length == 0) {
         println("parse expression error!")

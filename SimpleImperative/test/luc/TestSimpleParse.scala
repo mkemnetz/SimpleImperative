@@ -98,10 +98,9 @@ class TestSimpleParse extends FunSuite {
 
   testParse("testcase12", New(Clazz("course1", "course2")), "new struct StudentSemesterRecord { course1, course2 }")
 
-  testClass("testcase13", Clazz("value", "next"), "struct ListNode { value, next } \n")
+  testClass("testcase13", Clazz("value", "next"), "struct ListNode { value, next } ")
   
-  testClass("testcase14", null, "abcde")
-
+  
   //test selection
   testParse("testcase15", Selection(Variable("n"), "next"), "n.next ")
 
