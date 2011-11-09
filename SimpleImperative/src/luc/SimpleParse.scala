@@ -14,8 +14,9 @@ object StatementParser extends JavaTokenParsers {
     wholeNumber ^^ { case s => Constant(s.toInt) }
     | "var" ~ ident ^^ { case _ ~ e => new Variable(e) }
     | "while" ~ expr ~ expr ^^ { case _ ~ l ~ r => While(l, r) }
-    | "new" ~ "struct" ~ ident ~ "{" ~ repsep(ident, ",") ~ "}"
-    	^^ { case _~ _ ~ e ~ _ ~ s ~ _ => New(GlobalStore.PutClass(e, Clazz(s: _*))) }
+//    | "new" ~ "struct" ~ ident ~ "{" ~ repsep(ident, ",") ~ "}"
+//    	^^ { case _~ _ ~ e ~ _ ~ s ~ _ => New(GlobalStore.PutClass(e, Clazz(s: _*))) }
+    | "new" ~ clazz ^^ { case _ ~ e => New(e)}
     | "new" ~ ident ^^ { case _ ~ e => New(GlobalStore.GetClass(e)) }
     | "(" ~> expr <~ ")" ^^ { case e => e }
     | "{" ~> repsep(expr, ",") <~ "}" ^^ { case ss => Sequence(ss: _*) }

@@ -28,6 +28,7 @@ object SimpleValidator {
     case Selection(r, f) => Check(r)
     case Variable(n) => true
     case Constant(e) => true
+    case New(e) => true
     case null => true
     case _ => false
   }
