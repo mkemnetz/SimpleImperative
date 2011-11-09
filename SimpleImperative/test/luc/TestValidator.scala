@@ -36,34 +36,38 @@ class testValidator extends FunSuite {
   //while( n.next ) { n = 1 } --> OK
   testParse("testcase7", While(Selection(Variable("n"), "next"), Assignment(Variable("n"), Constant(1))), true);
 
+    //while( n.next ) { 1 = n } --> error
+  testParse("testcase8", While(Selection(Variable("n"), "next"), Assignment(Constant(1),Variable("n"))), false);
+
+  
   //while( while(n){1}) { n = 1 } --> error
-  testParse("testcase8", While(While(Variable("n"), Constant(1)), Assignment(Variable("n"), Constant(1))), false);
+  testParse("testcase9", While(While(Variable("n"), Constant(1)), Assignment(Variable("n"), Constant(1))), false);
 
   //assignment statements themselves cannot be used as l-values (only as r-values)
   // (n = 2) = v
   // it is error
 
-  testParse("testcase9", Assignment(Assignment(Variable("n"), Constant(2)), Variable("v")), false);
+  testParse("testcase10", Assignment(Assignment(Variable("n"), Constant(2)), Variable("v")), false);
 
   // v = (n = 2)
   // it is OK
-  testParse("testcase10", Assignment(Variable("v"), Assignment(Variable("n"), Constant(2))), true);
+  testParse("testcase11", Assignment(Variable("v"), Assignment(Variable("n"), Constant(2))), true);
 
   //test assignment in Sequence
-  testParse("testcase11", Sequence(Assignment(Constant(1), Variable("v"))), false);
+  testParse("testcase12", Sequence(Assignment(Constant(1), Variable("v"))), false);
   
    //test assignment in plus
-  testParse("testcase12", Plus(Assignment(Constant(1), Variable("v")), Constant(0)), false);
+  testParse("testcase13", Plus(Assignment(Constant(1), Variable("v")), Constant(0)), false);
   
   //test  assignment in minus
-  testParse("testcase13", Minus(Assignment(Constant(1), Variable("v")), Constant(0)), false);
+  testParse("testcase14", Minus(Assignment(Constant(1), Variable("v")), Constant(0)), false);
   
   //test  assignment in times
-  testParse("testcase14", Times(Assignment(Constant(1), Variable("v")), Constant(0)), false);
+  testParse("testcase15", Times(Assignment(Constant(1), Variable("v")), Constant(0)), false);
   
   //test assignment in div
-  testParse("testcase15", Div(Assignment(Constant(1), Variable("v")), Constant(0)), false);
+  testParse("testcase16", Div(Assignment(Constant(1), Variable("v")), Constant(0)), false);
   
   //test assignment in Selection
-  testParse("testcase16", Selection(Assignment(Constant(1), Variable("v")), "next"), false);
+  testParse("testcase17", Selection(Assignment(Constant(1), Variable("v")), "next"), false);
 }

@@ -3,11 +3,11 @@ package luc
 object SimpleValidator {
   def Check(s: Statement): Boolean = s match {
     case While(guard, body) => guard match {
-      case Constant(c) => true
-      case Variable(v) => true
-      case Assignment(left, right) => Check(guard)
-      case Selection(receiver, field) => true
-      case Sequence(statements @ _*) => Check(statements.last)
+      case Constant(c) => Check(body)
+      case Variable(v) => Check(body)
+      case Assignment(left, right) => Check(guard) && Check(body)
+      case Selection(receiver, field) => Check(body)
+      case Sequence(statements @ _*) => Check(statements.last) && Check(body)
       case _ => false
     }
     case Assignment(left, right) => left match {
