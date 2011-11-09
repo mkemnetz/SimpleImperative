@@ -27,7 +27,6 @@ object mainSimple {
   }
 
   def Parse(s: String): Statement = {
-    // println(s)
     try {
       StatementParser.parseAll(StatementParser.value, s).get match {
         case c: Clazz => null
@@ -41,30 +40,25 @@ object mainSimple {
     }
   }
 
-  def ParseAll(): Array[Statement] = {
-    input.filter(s => s.trim() != "").map(s => Parse(s)).filter(e => e != null).toArray
+  def Parse(): Statement = {
+    val arr = input.filter(s => s.trim() != "").map(s => Parse(s)).filter(e => e != null).toArray
+    if (arr.length == 0) {
+      println("parse expression error!")
+      null
+    } else {
+      if (arr.length == 1) arr.head else new Sequence(arr: _*)
+    }
   }
 
   def Execute(): Boolean = {
 
     try {
-      val arr = ParseAll()
-      
-      if (arr.length == 0) {
-        println("parse expression error!")
-        return false
-      }
-
-      val parseStatement = if (arr.length == 1) arr.head else new Sequence(arr: _*)
-
+      val parseStatement = Parse()
       if (SimpleValidator.Check(parseStatement)) {
-
         if (parseStatement != null) {
           //only for debug
-          println(parseStatement)
-
+          //println(parseStatement)
           GlobalStore.Allocation(parseStatement)
-
           //GlobalStore.Watch
           SimpleImperative.apply(GlobalStore.Memory)(parseStatement)
         }
