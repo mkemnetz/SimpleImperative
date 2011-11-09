@@ -18,7 +18,7 @@ object SimpleValidator {
       }
       case Sequence(statements @ _*) => statements.map(s => Check(s)).foldLeft(true)(_ && _)
       case Assignment(left, right) => Left(left).isRight && Check(right)
-      case Selection(left, field) => Left(left).isLeft
+      case Selection(left, field) => Check(left)
       case _ => false
     }
     case Sequence(statements @ _*) => statements.map(s => Check(s)).foldLeft(true)(_ && _)
