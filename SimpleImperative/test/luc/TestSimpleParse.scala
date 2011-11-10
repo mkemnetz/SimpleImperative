@@ -104,8 +104,11 @@ class TestSimpleParse extends FunSuite {
   testParse("testcase14", Selection(Variable("n"), "next"), "n.next ")
 
   testParse("testcase15", Assignment(Variable("n"), Selection(Variable("n"), "next")), "n = n.next ")
-
+   
   //test group
   val input: Array[String] = "var n\n n = new struct ListNode { value, next } \n n = n.next ".split("\n")
   testParseAll("testcase16", Sequence(Variable("n"), Assignment(Variable("n"), New(Clazz("value", "next"))), Assignment(Variable("n"), Selection(Variable("n"), "next"))), input)
+  
+  testParse("testcase17", Assignment(Variable("n"), New(Clazz("value", "next"))), "var n = new ListNode")
+  
 }

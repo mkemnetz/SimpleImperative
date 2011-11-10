@@ -94,6 +94,7 @@ object Cell {
 
 object GlobalStore {
   private var store: Store = Map[String, Cell]()
+  private var typedecl = Map[String, Clazz]()
   def Reset(): Unit = store = Map[String, Cell]()
   def Memory: Store = store
   def New(s: String): Cell = {
@@ -102,6 +103,16 @@ object GlobalStore {
       println("new memory for " + s)
     }
     store(s)
+  }
+  def PutClass(s: String, c: Clazz): Clazz = {
+    if (!typedecl.keySet.exists(key => key.equals(s))) {
+      typedecl += (s -> c)
+      println("new type name " + s + " for " + c)
+    }
+    c
+  }
+  def GetClass(s: String) :Clazz = {
+    typedecl(s)
   }
   def Count(): Int = store.count(s => true)
   def Watch(): Unit = println(store)
