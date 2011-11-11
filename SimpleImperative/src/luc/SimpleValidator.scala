@@ -26,6 +26,8 @@ object SimpleValidator {
     case Times(left, right) => Check(left) && Check(right)
     case Div(left, right) => Check(left) && Check(right)
     case Selection(r, f) => Check(r)
+    case Constant(e) => true
+    case null => true
     case _ => false
   }
 }

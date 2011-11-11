@@ -70,4 +70,9 @@ class testValidator extends FunSuite {
   
   //test assignment in Selection
   testParse("testcase17", Selection(Assignment(Constant(1), Variable("v")), "next"), false);
+  
+  //test { 0 }
+  testParse("testcase18", Sequence(Constant(0)), true);
+  
+  
 }

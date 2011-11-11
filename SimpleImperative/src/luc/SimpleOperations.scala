@@ -27,10 +27,16 @@ object mainSimple {
   }
 
   def Execute(): Boolean = {
-    
+
     try {
-      val arr = input.filter(s => s.trim() != "" )
-        .map(s => StatementParser.parseAll(StatementParser.expr, s).get).toArray
+      //todo: maybe only parse class here
+
+      val arr: Array[Statement] = input.filter(s => s.trim() != "")
+        .map(s => (
+          if (StatementParser.parseAll(StatementParser.clazz, s) != null) {
+            null
+          } else StatementParser.parseAll(StatementParser.expr, s).get))
+        .toArray
 
       if (arr.length == 0) {
         println("parse expression error!")
@@ -41,14 +47,15 @@ object mainSimple {
 
       if (SimpleValidator.Check(parseStatement)) {
 
-        //only for debug
-        println(parseStatement)
+        if (parseStatement != null) {
+          //only for debug
+          println(parseStatement)
 
-        GlobalStore.Allocation(parseStatement)
+          GlobalStore.Allocation(parseStatement)
 
-        //GlobalStore.Watch
-        SimpleImperative.apply(GlobalStore.Memory)(parseStatement)
-
+          //GlobalStore.Watch
+          SimpleImperative.apply(GlobalStore.Memory)(parseStatement)
+        }
         return true
       } else {
         System.err.println("Valid Check error!")

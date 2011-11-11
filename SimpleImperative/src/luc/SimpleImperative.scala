@@ -95,7 +95,10 @@ object Cell {
 object GlobalStore {
   private var store: Store = Map[String, Cell]()
   private var typedecl = Map[String, Clazz]()
-  def Reset(): Unit = store = Map[String, Cell]()
+  def Reset(): Unit = {
+    store = Map[String, Cell]()
+    typedecl = Map[String, Clazz]()
+  }
   def Memory: Store = store
   def New(s: String): Cell = {
     if (!store.keySet.exists(key => key.equals(s))) {
@@ -111,11 +114,21 @@ object GlobalStore {
     }
     c
   }
-  def GetClass(s: String) :Clazz = {
-    typedecl(s)
+  def GetClass(s: String): Clazz = {
+      if (typedecl.keySet.exists(key => key.equals(s))) {
+    	  typedecl(s)
+      }
+      else {
+        null
+      }
   }
   def Count(): Int = store.count(s => true)
-  def Watch(): Unit = println(store)
+  def Watch(): Unit = {
+    println("Defined classes:")
+    println(typedecl)
+    println("Memory variables:")
+    println(store)
+  }
   def Allocation(s: Statement): Cell = s match {
     case Variable(name) => New(name)
     case Plus(left, right) => Allocation(left); Allocation(right)
